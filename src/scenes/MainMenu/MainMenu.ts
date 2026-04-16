@@ -1,7 +1,7 @@
 import { Scene } from "@/scenes/Scene";
 import type { SceneId } from "@/scenes/SceneId";
 import { VIEWPORT_WIDTH } from "@/services/AutoScaler";
-import type { SceneManager } from "@/services/SceneManager";
+import type { SceneManager } from "@/services/scenes/SceneManager";
 import { MenuButton } from "@/ui/MenuButton";
 import { Container, Text } from "pixi.js";
 

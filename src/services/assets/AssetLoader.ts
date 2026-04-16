@@ -1,4 +1,4 @@
-import { sceneAssets } from "@/assets/sceneAssets";
+import { sceneAssets } from "@/services/assets/sceneAssets";
 import { SCENE_IDS, type SceneId } from "@/scenes/SceneId";
 import { Assets } from "pixi.js";
 

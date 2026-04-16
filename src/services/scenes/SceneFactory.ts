@@ -1,6 +1,6 @@
 import { Scene } from "@/scenes/Scene";
 import { SceneId } from "@/scenes/SceneId";
-import type { SceneManager } from "@/services/SceneManager";
+import type { SceneManager } from "@/services/scenes/SceneManager";
 
 import { AceOfShadows } from "@/scenes/AceOfShadows/AceOfShadows";
 import { MagicWords } from "@/scenes/MagicWords/MagicWords";

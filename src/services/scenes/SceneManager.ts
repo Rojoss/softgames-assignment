@@ -3,7 +3,7 @@ import { Container } from "pixi.js";
 import { Scene } from "@/scenes/Scene";
 import type { SceneId } from "@/scenes/SceneId";
 import { sceneFactories } from "@/factories/SceneFactory";
-import { AssetLoader } from "@/services/AssetLoader";
+import { AssetLoader } from "@/services/assets/AssetLoader";
 import { LoadingScreen } from "@/ui/LoadingScreen";
 
 /**

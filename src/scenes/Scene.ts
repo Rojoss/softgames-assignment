@@ -1,5 +1,5 @@
 import { Container } from "pixi.js";
-import type { SceneManager } from "@/services/SceneManager";
+import type { SceneManager } from "@/services/scenes/SceneManager";
 
 export abstract class Scene extends Container {
   private hasLoaded = false;

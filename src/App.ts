@@ -1,8 +1,8 @@
 import { GameStage } from "@/GameStage";
-import { AssetLoader } from "@/services/AssetLoader";
-import { AutoScaler } from "@/services/AutoScaler";
+import { AssetLoader } from "@/services/assets/AssetLoader";
+import { AutoScaler } from "@/services/window/AutoScaler";
 import { FPSMeter } from "@/services/FPSMeter";
-import { SceneManager } from "@/services/SceneManager";
+import { SceneManager } from "@/services/scenes/SceneManager";
 import { Application } from "pixi.js";
 
 export class App {

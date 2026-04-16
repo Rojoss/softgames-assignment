@@ -1,4 +1,4 @@
-import type { SheetId } from "@/assets/sceneAssets";
+import type { SheetId } from "@/services/assets/sceneAssets";
 import { Assets, Spritesheet, Texture } from "pixi.js";
 
 function getFallbackTexture(): Texture {
