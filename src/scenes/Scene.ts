@@ -20,5 +20,14 @@ export abstract class Scene extends Container {
     this.hasLoaded = true;
   }
 
+  /**
+   * Runs scene-specific teardown before the scene instance is destroyed.
+   */
+  public close(): void {
+    this.unload();
+  }
+
   protected abstract load(): Promise<void>;
+
+  protected unload(): void {}
 }

@@ -20,7 +20,7 @@ export class App {
     this.fpsService = new FPSMeter(pixiApplication.ticker);
     this.tweenManager = new TweenManager(pixiApplication.ticker);
     TweenManager.setShared(this.tweenManager);
-    this.sceneManager = new SceneManager(this.assetLoader);
+    this.sceneManager = new SceneManager(this.assetLoader, this.tweenManager);
 
     this.gameStage = new GameStage(this.sceneManager, this.fpsService);
     pixiApplication.stage.addChild(this.gameStage);

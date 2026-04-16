@@ -3,11 +3,11 @@ import { Container, Point, type PointData } from "pixi.js";
 import { Card } from "@/scenes/AceOfShadows/Card";
 import { CardPile } from "@/scenes/AceOfShadows/CardPile";
 import { degreesToRadians } from "@/utils/degreesToRadians";
-import { getRandomInRange } from "@/utils/getRandomInRange";
 import { getRandomOffset } from "@/utils/getRandomOffset";
-import { lerp } from "@/utils/lerp";
 import { Ease } from "@/services/tweens/Ease";
 import { TweenManager } from "@/services/tweens/TweenManager";
+import { getRandomInRange } from "@/utils/getRandomInRange";
+import { lerp } from "@/utils/lerp";
 
 const LAND_OFFSET_RANGE = 50;
 const LAND_ROTATION_RANGE_DEGREES = 10;
@@ -31,11 +31,11 @@ export class CardAnimationService {
   /**
    * Runs a quick horizontal card flip by collapsing and restoring the x scale.
    */
-  public async flipCard(card: Card, side: "open" | "close", delay = 0): Promise<void> {
+  private flipCard(card: Card, side: "open" | "close", delay = 0, onComplete?: () => void): void {
     const halfDuration = FLIP_DURATION_MS / 2;
     const baseScaleX = Math.abs(card.scale.x);
 
-    await this.tweenManager.addAsync({
+    this.tweenManager.add({
       target: card.scale,
       duration: halfDuration,
       delay,
@@ -43,16 +43,20 @@ export class CardAnimationService {
       onUpdate: (scale, tween) => {
         scale.x = lerp(baseScaleX, 0, tween.easedProgress);
       },
-    });
+      onComplete: () => {
+        card.flip(side);
 
-    card.flip(side);
-
-    await this.tweenManager.addAsync({
-      target: card.scale,
-      duration: halfDuration,
-      ease: Ease.easeOutQuad,
-      onUpdate: (scale, tween) => {
-        scale.x = lerp(0, baseScaleX, tween.easedProgress);
+        this.tweenManager.add({
+          target: card.scale,
+          duration: halfDuration,
+          ease: Ease.easeOutQuad,
+          onUpdate: (scale, tween) => {
+            scale.x = lerp(0, baseScaleX, tween.easedProgress);
+          },
+          onComplete: () => {
+            onComplete?.();
+          },
+        });
       },
     });
   }
@@ -60,14 +64,14 @@ export class CardAnimationService {
   /**
    * Moves a card along a short eased arc.
    */
-  public moveCard(card: Card, from: PointData, to: PointData, endRotation: number): Promise<void> {
+  private moveCard(card: Card, from: PointData, to: PointData, endRotation: number, onComplete?: () => void): void {
     const startPosition = new Point(from.x, from.y);
     const targetPosition = new Point(to.x, to.y);
     const startRotation = card.rotation;
 
     card.position.copyFrom(startPosition);
 
-    return this.tweenManager.addAsync({
+    this.tweenManager.add({
       target: card,
       duration: MOVE_DURATION_MS,
       ease: Ease.easeInOutCubic,
@@ -81,6 +85,7 @@ export class CardAnimationService {
       onComplete: (movingCard) => {
         movingCard.position.copyFrom(targetPosition);
         movingCard.rotation = endRotation;
+        onComplete?.();
       },
     });
   }
@@ -88,11 +93,12 @@ export class CardAnimationService {
   /**
    * Runs the common source move, source reveal, and target landing sequence for the top card.
    */
-  public async transferTopCard(sourcePile: CardPile, targetPile: CardPile): Promise<Card | undefined> {
+  public transferTopCard(sourcePile: CardPile, targetPile: CardPile, onComplete?: (card?: Card) => void): void {
     const sourceTopCard = sourcePile.getTopCard();
 
     if (!sourceTopCard) {
-      return undefined;
+      onComplete?.();
+      return;
     }
 
     const startWorldPosition = sourceTopCard.getGlobalPosition(new Point());
@@ -104,7 +110,8 @@ export class CardAnimationService {
     const movingCard = sourcePile.removeCard();
 
     if (!movingCard) {
-      return undefined;
+      onComplete?.();
+      return;
     }
 
     movingCard.flip("open");
@@ -112,20 +119,17 @@ export class CardAnimationService {
     this.animationLayer.addChild(movingCard);
     movingCard.position.copyFrom(this.animationLayer.toLocal(startWorldPosition));
 
-    const movePromise = this.moveCard(movingCard, movingCard.position, this.animationLayer.toLocal(landingWorldPosition), landingRotation);
-
     const nextSourceCard = sourcePile.getTopCard();
-    const revealPromise = nextSourceCard ? this.flipCard(nextSourceCard, "open", FLIP_DELAY_MS) : Promise.resolve();
+    if (nextSourceCard) {
+      this.flipCard(nextSourceCard, "open", FLIP_DELAY_MS);
+    }
 
-    await movePromise;
+    this.moveCard(movingCard, movingCard.position, this.animationLayer.toLocal(landingWorldPosition), landingRotation, () => {
+      const currentWorldPosition = movingCard.getGlobalPosition(new Point());
 
-    const currentWorldPosition = movingCard.getGlobalPosition(new Point());
-
-    targetPile.addCard(movingCard);
-    movingCard.position.copyFrom(targetPile.toLocal(currentWorldPosition));
-
-    await revealPromise;
-
-    return movingCard;
+      targetPile.addCard(movingCard);
+      movingCard.position.copyFrom(targetPile.toLocal(currentWorldPosition));
+      onComplete?.(movingCard);
+    });
   }
 }

@@ -7,10 +7,12 @@ export interface TweenOptions<TTarget> {
   ease?: EaseFunction;
   onUpdate: TweenUpdateCallback<TTarget>;
   onComplete?: TweenCompleteCallback<TTarget>;
+  onCancel?: TweenCancelCallback<TTarget>;
 }
 
 export type TweenUpdateCallback<TTarget> = (target: TTarget, tween: Tween<TTarget>) => void;
 export type TweenCompleteCallback<TTarget> = (target: TTarget, tween: Tween<TTarget>) => void;
+export type TweenCancelCallback<TTarget> = (target: TTarget, tween: Tween<TTarget>) => void;
 
 /**
  * Stores the state and callbacks for a single tween.
@@ -23,6 +25,7 @@ export class Tween<TTarget> {
 
   private readonly onUpdate: TweenUpdateCallback<TTarget>;
   private readonly onComplete?: TweenCompleteCallback<TTarget>;
+  private readonly onCancel?: TweenCancelCallback<TTarget>;
 
   private remainingDelay: number;
   private elapsedMS = 0;
@@ -36,6 +39,7 @@ export class Tween<TTarget> {
     this.ease = options.ease ?? Ease.linear;
     this.onUpdate = options.onUpdate;
     this.onComplete = options.onComplete;
+    this.onCancel = options.onCancel;
     this.remainingDelay = this.delay;
   }
 
@@ -118,6 +122,20 @@ export class Tween<TTarget> {
     }
 
     this.finish();
+  }
+
+  /**
+   * Stops the tween without running its completion callback.
+   */
+  public cancel(): void {
+    if (this.isCompleted) {
+      return;
+    }
+
+    this.hasStarted = true;
+    this.remainingDelay = 0;
+    this.isCompleted = true;
+    this.onCancel?.(this.target, this);
   }
 
   private finish(): void {

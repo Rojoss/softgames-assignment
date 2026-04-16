@@ -55,7 +55,7 @@ export class TweenManager {
   }
 
   /**
-   * Creates and registers a tween, resolving when it completes.
+   * Creates and registers a tween, resolving when it completes or is cancelled.
    */
   public addAsync<TTarget>(options: TweenOptions<TTarget>): Promise<void> {
     return new Promise((resolve) => {
@@ -63,6 +63,10 @@ export class TweenManager {
         ...options,
         onComplete: (target, tween) => {
           options.onComplete?.(target, tween);
+          resolve();
+        },
+        onCancel: (target, tween) => {
+          options.onCancel?.(target, tween);
           resolve();
         },
       });
@@ -79,11 +83,14 @@ export class TweenManager {
   }
 
   public remove(tween: Tween<unknown>): void {
+    tween.cancel();
     this.tweens.delete(tween);
   }
 
   public clear(): void {
-    this.tweens.clear();
+    for (const tween of this.tweens) {
+      this.remove(tween);
+    }
   }
 
   public pause(): void {
@@ -119,7 +126,7 @@ export class TweenManager {
 
   public destroy(): void {
     this.ticker?.remove(this.handleTick);
-    this.tweens.clear();
+    this.clear();
 
     if (TweenManager.sharedInstance === this) {
       TweenManager.clearShared();

@@ -55,6 +55,10 @@ export class AceOfShadows extends Scene {
     return Promise.resolve();
   }
 
+  protected override unload(): void {
+    this.stopTransferLoop();
+  }
+
   private readonly handleAddedToStage = (): void => {
     this.startTransferLoop();
   };
@@ -82,11 +86,11 @@ export class AceOfShadows extends Scene {
     this.transferIntervalId = undefined;
   }
 
-  private async transferTopCard(): Promise<void> {
-    const card = await this.cardAnimations.transferTopCard(this.leftPile, this.rightPile);
-
-    if (!card || !this.leftPile.hasCards()) {
-      this.stopTransferLoop();
-    }
+  private transferTopCard(): void {
+    this.cardAnimations.transferTopCard(this.leftPile, this.rightPile, (card) => {
+      if (!card || !this.leftPile.hasCards()) {
+        this.stopTransferLoop();
+      }
+    });
   }
 }

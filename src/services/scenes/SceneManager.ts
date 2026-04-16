@@ -5,6 +5,7 @@ import { sceneFactories } from "@/services/scenes/SceneFactory";
 import { AssetLoader } from "@/services/assets/AssetLoader";
 import { LoadingScreen } from "@/ui/LoadingScreen";
 import { SceneId } from "@/services/scenes/SceneId";
+import { TweenManager } from "@/services/tweens/TweenManager";
 
 /**
  * The SceneManager is responsible for managing the different scenes of the game.
@@ -14,17 +15,19 @@ import { SceneId } from "@/services/scenes/SceneId";
  */
 export class SceneManager extends Container {
   private readonly assetLoader: AssetLoader;
-  private readonly scenes = new Map<SceneId, Scene>();
+  private readonly tweenManager: TweenManager;
   private readonly sceneContainer = new Container();
   private readonly loadingScreen = new LoadingScreen();
 
+  private currentScene?: Scene;
   private currentSceneId?: SceneId;
   private transitionQueue = Promise.resolve();
 
-  constructor(assetLoader: AssetLoader) {
+  constructor(assetLoader: AssetLoader, tweenManager: TweenManager) {
     super();
 
     this.assetLoader = assetLoader;
+    this.tweenManager = tweenManager;
     this.addChild(this.sceneContainer, this.loadingScreen);
   }
 
@@ -50,21 +53,28 @@ export class SceneManager extends Container {
   }
 
   /**
-   * Gets the scene instance for the given scene ID.
-   * If the scene does not exist, it will be created and stored.
+   * Creates a fresh scene instance for the given scene ID.
    */
-  private getScene(sceneId: SceneId): Scene {
-    const existingScene = this.scenes.get(sceneId);
-
-    if (existingScene) {
-      return existingScene;
-    }
-
+  private createScene(sceneId: SceneId): Scene {
     const scene = sceneFactories[sceneId](this);
     scene.visible = false;
-    this.scenes.set(sceneId, scene);
 
     return scene;
+  }
+
+  /**
+   * Destroys a scene instance after it has been closed.
+   */
+  private destroyScene(scene?: Scene): void {
+    if (!scene) {
+      return;
+    }
+
+    if (scene.parent === this.sceneContainer) {
+      this.sceneContainer.removeChild(scene);
+    }
+
+    scene.destroy({ children: true });
   }
 
   /**
@@ -76,18 +86,25 @@ export class SceneManager extends Container {
       return;
     }
 
+    const previousScene = this.currentScene;
+
+    previousScene?.close();
+    this.tweenManager.clear();
+
     this.loadingScreen.show();
 
     try {
       await this.assetLoader.loadSceneAssets(sceneId);
 
-      const nextScene = this.getScene(sceneId);
+      const nextScene = this.createScene(sceneId);
       await nextScene.prepare();
       nextScene.visible = true;
 
       this.sceneContainer.removeChildren();
       this.sceneContainer.addChild(nextScene);
+      this.currentScene = nextScene;
       this.currentSceneId = sceneId;
+      this.destroyScene(previousScene);
     } finally {
       this.loadingScreen.hide();
     }
