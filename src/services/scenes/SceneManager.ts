@@ -3,9 +3,9 @@ import { Container } from "pixi.js";
 import { Scene } from "@/scenes/Scene";
 import { sceneFactories } from "@/services/scenes/SceneFactory";
 import { AssetLoader } from "@/services/assets/AssetLoader";
+import { eventBus } from "@/services/events/Events";
 import { LoadingScreen } from "@/ui/LoadingScreen";
 import { SceneId } from "@/services/scenes/SceneId";
-import { TweenManager } from "@/services/tweens/TweenManager";
 
 /**
  * The SceneManager is responsible for managing the different scenes of the game.
@@ -15,7 +15,6 @@ import { TweenManager } from "@/services/tweens/TweenManager";
  */
 export class SceneManager extends Container {
   private readonly assetLoader: AssetLoader;
-  private readonly tweenManager: TweenManager;
   private readonly sceneContainer = new Container();
   private readonly loadingScreen = new LoadingScreen();
 
@@ -23,11 +22,10 @@ export class SceneManager extends Container {
   private currentSceneId?: SceneId;
   private transitionQueue = Promise.resolve();
 
-  constructor(assetLoader: AssetLoader, tweenManager: TweenManager) {
+  constructor(assetLoader: AssetLoader) {
     super();
 
     this.assetLoader = assetLoader;
-    this.tweenManager = tweenManager;
     this.addChild(this.sceneContainer, this.loadingScreen);
   }
 
@@ -87,9 +85,13 @@ export class SceneManager extends Container {
     }
 
     const previousScene = this.currentScene;
+    const previousSceneId = this.currentSceneId;
 
     previousScene?.close();
-    this.tweenManager.clear();
+
+    if (previousSceneId) {
+      eventBus.dispatch("sceneClose", { sceneId: previousSceneId });
+    }
 
     this.loadingScreen.show();
 
@@ -98,12 +100,14 @@ export class SceneManager extends Container {
 
       const nextScene = this.createScene(sceneId);
       await nextScene.prepare();
+
       nextScene.visible = true;
 
       this.sceneContainer.removeChildren();
       this.sceneContainer.addChild(nextScene);
       this.currentScene = nextScene;
       this.currentSceneId = sceneId;
+      eventBus.dispatch("sceneOpen", { sceneId });
       this.destroyScene(previousScene);
     } finally {
       this.loadingScreen.hide();

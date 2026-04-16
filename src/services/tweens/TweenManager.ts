@@ -1,5 +1,6 @@
 import { Ticker } from "pixi.js";
 
+import { eventBus } from "@/services/events/Events";
 import { Tween, type TweenOptions } from "@/services/tweens/Tween";
 
 /**
@@ -10,12 +11,18 @@ export class TweenManager {
 
   private readonly tweens = new Set<Tween<unknown>>();
   private readonly ticker?: Ticker;
+  private readonly unsubscribePause: () => void;
+  private readonly unsubscribeResume: () => void;
+  private readonly unsubscribeSceneClose: () => void;
 
   private isPaused = false;
 
   constructor(ticker?: Ticker) {
     this.ticker = ticker;
     this.ticker?.add(this.handleTick);
+    this.unsubscribePause = eventBus.subscribe("pause", this.handlePause);
+    this.unsubscribeResume = eventBus.subscribe("resume", this.handleResume);
+    this.unsubscribeSceneClose = eventBus.subscribe("sceneClose", this.handleSceneClose);
   }
 
   /**
@@ -126,12 +133,27 @@ export class TweenManager {
 
   public destroy(): void {
     this.ticker?.remove(this.handleTick);
+    this.unsubscribePause();
+    this.unsubscribeResume();
+    this.unsubscribeSceneClose();
     this.clear();
 
     if (TweenManager.sharedInstance === this) {
       TweenManager.clearShared();
     }
   }
+
+  private readonly handlePause = (): void => {
+    this.isPaused = true;
+  };
+
+  private readonly handleResume = (): void => {
+    this.isPaused = false;
+  };
+
+  private readonly handleSceneClose = (): void => {
+    this.clear();
+  };
 
   private readonly handleTick = (): void => {
     if (!this.ticker) {

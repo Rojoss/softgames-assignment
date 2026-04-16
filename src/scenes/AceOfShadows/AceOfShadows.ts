@@ -5,6 +5,7 @@ import { CardAnimationService } from "@/scenes/AceOfShadows/CardAnimationService
 import { CardPile } from "@/scenes/AceOfShadows/CardPile";
 import { Scene } from "@/scenes/Scene";
 import { ACE_OF_SHADOWS_CARDS } from "@/scenes/AceOfShadows/cards";
+import { eventBus } from "@/services/events/Events";
 import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "@/services/window/AutoScaler";
 import type { SceneManager } from "@/services/scenes/SceneManager";
 import { BackButton } from "@/ui/BackButton";
@@ -20,6 +21,8 @@ export class AceOfShadows extends Scene {
   private readonly cardAnimations = new CardAnimationService(this.animationLayer);
 
   private transferIntervalId?: number;
+  private unsubscribePause?: () => void;
+  private unsubscribeResume?: () => void;
 
   constructor(sceneManager: SceneManager) {
     super(sceneManager);
@@ -49,6 +52,9 @@ export class AceOfShadows extends Scene {
     this.rightPile.setOpen(true);
     this.leftPile.flipTopCard("open");
 
+    this.unsubscribePause = eventBus.subscribe("pause", this.handlePause);
+    this.unsubscribeResume = eventBus.subscribe("resume", this.handleResume);
+
     this.on("added", this.handleAddedToStage);
     this.on("removed", this.handleRemovedFromStage);
 
@@ -57,9 +63,25 @@ export class AceOfShadows extends Scene {
 
   protected override unload(): void {
     this.stopTransferLoop();
+    this.unsubscribePause?.();
+    this.unsubscribeResume?.();
+    this.unsubscribePause = undefined;
+    this.unsubscribeResume = undefined;
   }
 
   private readonly handleAddedToStage = (): void => {
+    this.startTransferLoop();
+  };
+
+  private readonly handlePause = (): void => {
+    this.stopTransferLoop();
+  };
+
+  private readonly handleResume = (): void => {
+    if (!this.parent || !this.leftPile.hasCards()) {
+      return;
+    }
+
     this.startTransferLoop();
   };
 

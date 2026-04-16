@@ -1,6 +1,6 @@
 import { Container, type DestroyOptions, Text } from "pixi.js";
 
-import { FPSMeter } from "@/services/fps/FPSMeter";
+import { eventBus } from "@/services/events/Events";
 
 const GOOD_FPS_THRESHOLD = 50;
 const WARNING_FPS_THRESHOLD = 30;
@@ -16,7 +16,7 @@ export class FPSDisplay extends Container {
   private readonly fpsText: Text;
   private unsubscribe?: () => void;
 
-  constructor(fpsService: FPSMeter) {
+  constructor() {
     super();
 
     this.fpsText = new Text({
@@ -32,7 +32,7 @@ export class FPSDisplay extends Container {
 
     this.addChild(this.fpsText);
 
-    this.unsubscribe = fpsService.subscribe((fps) => {
+    this.unsubscribe = eventBus.subscribe("fpsUpdate", (fps) => {
       this.fpsText.text = `FPS: ${fps}`;
       this.fpsText.style.fill = this.getFPSColor(fps);
     });

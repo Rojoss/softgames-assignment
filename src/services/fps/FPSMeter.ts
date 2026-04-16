@@ -1,11 +1,10 @@
 import { Ticker } from "pixi.js";
 
-type FPSListener = (fps: number) => void;
+import { eventBus } from "@/services/events/Events";
 
 const DEFAULT_UPDATE_INTERVAL_MS = 250;
 
 export class FPSMeter {
-  private readonly listeners = new Set<FPSListener>();
   private readonly ticker: Ticker;
   private readonly updateIntervalMs: number;
 
@@ -18,24 +17,11 @@ export class FPSMeter {
     this.currentFPS = Math.round(this.ticker.FPS);
 
     this.ticker.add(this.handleTick);
-  }
-
-  public get fps(): number {
-    return this.currentFPS;
-  }
-
-  public subscribe(listener: FPSListener): () => void {
-    this.listeners.add(listener);
-    listener(this.currentFPS);
-
-    return () => {
-      this.listeners.delete(listener);
-    };
+    eventBus.dispatch("fpsUpdate", this.currentFPS);
   }
 
   public destroy(): void {
     this.ticker.remove(this.handleTick);
-    this.listeners.clear();
   }
 
   private readonly handleTick = (): void => {
@@ -54,9 +40,6 @@ export class FPSMeter {
     }
 
     this.currentFPS = nextFPS;
-
-    for (const listener of this.listeners) {
-      listener(this.currentFPS);
-    }
+    eventBus.dispatch("fpsUpdate", this.currentFPS);
   };
 }
