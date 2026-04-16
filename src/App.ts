@@ -1,8 +1,8 @@
 import { GameStage } from "@/GameStage";
 import { AssetLoader } from "@/services/assets/AssetLoader";
 import { AutoScaler } from "@/services/window/AutoScaler";
-import { FPSMeter } from "@/services/FPSMeter";
 import { SceneManager } from "@/services/scenes/SceneManager";
+import { TweenManager } from "@/services/tweens/TweenManager";
 import { Application } from "pixi.js";
 import { FPSMeter } from "@/services/fps/FPSMeter";
 
@@ -12,12 +12,15 @@ export class App {
   private readonly assetLoader: AssetLoader;
   private readonly autoScaler: AutoScaler;
   private readonly fpsService: FPSMeter;
+  private readonly tweenManager: TweenManager;
   private readonly sceneManager: SceneManager;
 
   constructor(pixiApplication: Application) {
     this.assetLoader = new AssetLoader();
-    this.sceneManager = new SceneManager(this.assetLoader);
     this.fpsService = new FPSMeter(pixiApplication.ticker);
+    this.tweenManager = new TweenManager(pixiApplication.ticker);
+    TweenManager.setShared(this.tweenManager);
+    this.sceneManager = new SceneManager(this.assetLoader);
 
     this.gameStage = new GameStage(this.sceneManager, this.fpsService);
     pixiApplication.stage.addChild(this.gameStage);

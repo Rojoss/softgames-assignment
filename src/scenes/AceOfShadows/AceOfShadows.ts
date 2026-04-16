@@ -1,4 +1,7 @@
+import { Container } from "pixi.js";
+
 import { Card } from "@/scenes/AceOfShadows/Card";
+import { CardAnimationService } from "@/scenes/AceOfShadows/CardAnimationService";
 import { CardPile } from "@/scenes/AceOfShadows/CardPile";
 import { Scene } from "@/scenes/Scene";
 import { ACE_OF_SHADOWS_CARDS } from "@/scenes/AceOfShadows/cards";
@@ -7,14 +10,14 @@ import type { SceneManager } from "@/services/scenes/SceneManager";
 import { BackButton } from "@/ui/BackButton";
 import { shuffleArray } from "@/utils/shuffleArray";
 
-const CARD_PILE_LEFT_X = VIEWPORT_WIDTH / 2 - 300;
-const CARD_PILE_RIGHT_X = VIEWPORT_WIDTH / 2 + 300;
-const CARD_PILE_Y = VIEWPORT_HEIGHT / 2 + 32;
 const TRANSFER_INTERVAL_MS = 1000;
+const CARD_HORIZONTAL_OFFSET = 300;
 
 export class AceOfShadows extends Scene {
   private readonly leftPile = new CardPile();
-  private readonly rightPile = new CardPile();
+  private readonly rightPile = new CardPile(true);
+  private readonly animationLayer = new Container();
+  private readonly cardAnimations = new CardAnimationService(this.animationLayer);
 
   private transferIntervalId?: number;
 
@@ -23,6 +26,7 @@ export class AceOfShadows extends Scene {
   }
 
   protected async load(): Promise<void> {
+    // Create back button
     const backButton = new BackButton();
     backButton.position.set(VIEWPORT_WIDTH / 2, 48 + (BackButton.HEIGHT + BackButton.SHADOW_OFFSET_Y) / 2);
     backButton.on("pointertap", () => {
@@ -30,14 +34,17 @@ export class AceOfShadows extends Scene {
     });
     this.addChild(backButton);
 
-    this.leftPile.position.set(CARD_PILE_LEFT_X, CARD_PILE_Y);
-    this.rightPile.position.set(CARD_PILE_RIGHT_X, CARD_PILE_Y);
-    this.addChild(this.leftPile, this.rightPile);
+    // Create card piles
+    this.leftPile.position.set(VIEWPORT_WIDTH / 2 - CARD_HORIZONTAL_OFFSET, VIEWPORT_HEIGHT / 2);
+    this.rightPile.position.set(VIEWPORT_WIDTH / 2 + CARD_HORIZONTAL_OFFSET, VIEWPORT_HEIGHT / 2);
+    this.addChild(this.leftPile, this.rightPile, this.animationLayer);
 
+    // Add shuffled cards to left pile
     shuffleArray(ACE_OF_SHADOWS_CARDS).forEach((cardType) => {
       this.leftPile.addCard(new Card(cardType));
     });
 
+    // Initialize card piles
     this.leftPile.setOpen(false);
     this.rightPile.setOpen(true);
     this.leftPile.flipTopCard("open");
@@ -62,7 +69,7 @@ export class AceOfShadows extends Scene {
     }
 
     this.transferIntervalId = window.setInterval(() => {
-      this.transferTopCard();
+      void this.transferTopCard();
     }, TRANSFER_INTERVAL_MS);
   }
 
@@ -75,22 +82,11 @@ export class AceOfShadows extends Scene {
     this.transferIntervalId = undefined;
   }
 
-  private transferTopCard(): void {
-    const card = this.leftPile.removeCard();
+  private async transferTopCard(): Promise<void> {
+    const card = await this.cardAnimations.transferTopCard(this.leftPile, this.rightPile);
 
-    if (!card) {
+    if (!card || !this.leftPile.hasCards()) {
       this.stopTransferLoop();
-      return;
     }
-
-    card.flip("open");
-    this.rightPile.addCard(card);
-
-    if (this.leftPile.hasCards()) {
-      this.leftPile.flipTopCard("open");
-      return;
-    }
-
-    this.stopTransferLoop();
   }
 }

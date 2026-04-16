@@ -1,45 +1,67 @@
-import { Container, PointData } from "pixi.js";
+import { Container, Point } from "pixi.js";
 
 import { Card, type CardSide } from "@/scenes/AceOfShadows/Card";
 
-const DEFAULT_VISIBLE_CARDS_COUNT = 2;
 const DEFAULT_CARD_OFFSET = { x: -20, y: -35 };
 
-interface CardPileOptions {
-  isOpen?: boolean;
-  visibleCardsCount?: number;
-  cardOffset?: PointData;
-}
-
 /**
- * Stores a stack of cards and only renders the configurable number of top cards.
+ * Stores a stack of cards.
  */
 export class CardPile extends Container {
   private readonly cards: Card[] = [];
+  private readonly preserveCardPositions: boolean;
 
-  private isOpen: boolean;
-  private visibleCardsCount: number;
-  private cardOffset: PointData;
+  private isOpen = false;
   private topCardSide: CardSide = "close";
 
-  constructor(options: CardPileOptions = {}) {
+  constructor(preserveCardPositions = false) {
     super();
 
-    this.isOpen = options.isOpen ?? false;
-    this.visibleCardsCount = options.visibleCardsCount ?? DEFAULT_VISIBLE_CARDS_COUNT;
-    this.cardOffset = options.cardOffset ?? DEFAULT_CARD_OFFSET;
+    this.preserveCardPositions = preserveCardPositions;
   }
 
-  public get size(): number {
-    return this.cards.length;
+  public getTopCard(): Card | undefined {
+    return this.cards[this.cards.length - 1];
+  }
+
+  /**
+   * Returns the local position where the next pushed card will land.
+   */
+  public getNextCardPosition(): Point {
+    if (this.preserveCardPositions) {
+      return new Point(0, 0);
+    }
+
+    return this.cards.length === 0 ? new Point(0, 0) : new Point(DEFAULT_CARD_OFFSET.x, DEFAULT_CARD_OFFSET.y);
+  }
+
+  private getSourceTopCardPosition(): Point {
+    return this.cards.length > 1 ? new Point(DEFAULT_CARD_OFFSET.x, DEFAULT_CARD_OFFSET.y) : new Point(0, 0);
   }
 
   /**
    * Adds a card on top of the pile.
    */
   public addCard(card: Card): void {
+    if (this.preserveCardPositions) {
+      this.cards.push(card);
+      card.flip(this.isOpen ? "open" : "close");
+      this.addChild(card);
+      return;
+    }
+
+    const previousTopCard = this.getTopCard();
+
+    if (previousTopCard) {
+      previousTopCard.position.set(0, 0);
+      previousTopCard.flip(this.isOpen ? "open" : "close");
+    }
+
     this.cards.push(card);
-    this.updateVisibleCards();
+
+    card.position.copyFrom(this.getSourceTopCardPosition());
+    card.flip(this.isOpen || this.topCardSide === "open" ? "open" : "close");
+    this.addChild(card);
   }
 
   /**
@@ -50,7 +72,23 @@ export class CardPile extends Container {
 
     this.topCardSide = "close";
 
-    this.updateVisibleCards();
+    if (!card) {
+      return undefined;
+    }
+
+    if (this.preserveCardPositions) {
+      if (card.parent === this) {
+        this.removeChild(card);
+      }
+
+      return card;
+    }
+
+    if (card.parent === this) {
+      this.removeChild(card);
+    }
+
+    this.updateSourceTopCard();
 
     return card;
   }
@@ -60,71 +98,64 @@ export class CardPile extends Container {
    */
   public setOpen(isOpen: boolean): void {
     this.isOpen = isOpen;
+    this.topCardSide = isOpen ? "open" : "close";
 
-    if (isOpen) {
-      this.topCardSide = "open";
-    } else {
-      this.topCardSide = "close";
+    if (this.preserveCardPositions) {
+      this.cards.forEach((card) => {
+        card.flip(this.topCardSide);
+      });
+
+      return;
     }
 
-    this.updateVisibleCards();
-  }
+    this.cards.forEach((card) => {
+      card.position.set(0, 0);
+      card.flip(this.isOpen ? "open" : "close");
+    });
 
-  /**
-   * Updates how many top cards remain visible in the stack.
-   */
-  public setVisibleCardsCount(visibleCardsCount: number): void {
-    this.visibleCardsCount = Math.max(1, visibleCardsCount);
-    this.updateVisibleCards();
-  }
-
-  /**
-   * Updates the offset that is applied between visible cards.
-   */
-  public setCardOffset(cardOffset: PointData): void {
-    this.cardOffset = cardOffset;
-    this.updateVisibleCards();
+    this.updateSourceTopCard();
   }
 
   /**
    * Flips the top card to the requested side, or toggles it when no side is provided.
    */
   public flipTopCard(side?: CardSide): void {
-    const topCard = this.cards[this.cards.length - 1];
+    const topCard = this.getTopCard();
 
     if (!topCard) {
       return;
     }
 
-    if (!this.isOpen) {
-      this.topCardSide = side ?? (this.topCardSide === "open" ? "close" : "open");
-      this.updateVisibleCards();
+    if (this.isOpen) {
+      topCard.flip(side);
       return;
     }
 
-    topCard.flip(side);
-
-    if (this.children.includes(topCard)) {
-      this.updateVisibleCards();
-    }
+    this.topCardSide = side ?? (this.topCardSide === "open" ? "close" : "open");
+    this.updateSourceTopCard();
   }
 
   public hasCards(): boolean {
     return this.cards.length > 0;
   }
 
-  private updateVisibleCards(): void {
-    this.removeChildren();
+  /**
+   * Updates the position and side of the top card based on the current pile state.
+   * This is used to ensure the correct card side is shown when cards are added or removed,
+   * and to reset the position of the source top card when a card is removed from the pile.
+   */
+  private updateSourceTopCard(): void {
+    if (this.preserveCardPositions) {
+      return;
+    }
 
-    const visibleCards = this.cards.slice(-this.visibleCardsCount);
+    const topCard = this.getTopCard();
 
-    visibleCards.forEach((card, index) => {
-      const isTopCard = index === visibleCards.length - 1;
-      const cardSide: CardSide = this.isOpen || (isTopCard && this.topCardSide === "open") ? "open" : "close";
+    if (!topCard) {
+      return;
+    }
 
-      card.flip(cardSide);
-      card.position.set(index * this.cardOffset.x, index * this.cardOffset.y);
-      this.addChild(card);
-    });
+    topCard.position.copyFrom(this.getSourceTopCardPosition());
+    topCard.flip(this.isOpen || this.topCardSide === "open" ? "open" : "close");
   }
 }

@@ -5,7 +5,7 @@ import { Sprite } from "pixi.js";
 export type CardSide = "open" | "close";
 
 /**
- * Renders a single Ace of Shadows card and can swap between open and closed sides.
+ * Renders a single card and can swap between open and closed sides.
  */
 export class Card extends Sprite {
   public readonly cardType: CardType;

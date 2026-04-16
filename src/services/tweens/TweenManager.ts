@@ -1,0 +1,136 @@
+import { Ticker } from "pixi.js";
+
+import { Tween, type TweenOptions } from "@/services/tweens/Tween";
+
+/**
+ * Manages active tweens and advances them on each tick.
+ */
+export class TweenManager {
+  private static sharedInstance?: TweenManager;
+
+  private readonly tweens = new Set<Tween<unknown>>();
+  private readonly ticker?: Ticker;
+
+  private isPaused = false;
+
+  constructor(ticker?: Ticker) {
+    this.ticker = ticker;
+    this.ticker?.add(this.handleTick);
+  }
+
+  /**
+   * App-wide tween manager instance for places where dependency injection would be too noisy.
+   */
+  public static get shared(): TweenManager {
+    if (!TweenManager.sharedInstance) {
+      throw new Error("TweenManager.shared was accessed before initialization.");
+    }
+
+    return TweenManager.sharedInstance;
+  }
+
+  public static setShared(tweenManager: TweenManager): void {
+    TweenManager.sharedInstance = tweenManager;
+  }
+
+  public static clearShared(): void {
+    TweenManager.sharedInstance = undefined;
+  }
+
+  public get paused(): boolean {
+    return this.isPaused;
+  }
+
+  public get activeTweenCount(): number {
+    return this.tweens.size;
+  }
+
+  /**
+   * Creates and registers a tween with the manager.
+   */
+  public add<TTarget>(options: TweenOptions<TTarget>): Tween<TTarget> {
+    const tween = new Tween(options);
+
+    return this.register(tween);
+  }
+
+  /**
+   * Creates and registers a tween, resolving when it completes.
+   */
+  public addAsync<TTarget>(options: TweenOptions<TTarget>): Promise<void> {
+    return new Promise((resolve) => {
+      this.add({
+        ...options,
+        onComplete: (target, tween) => {
+          options.onComplete?.(target, tween);
+          resolve();
+        },
+      });
+    });
+  }
+
+  /**
+   * Registers an existing tween instance with the manager.
+   */
+  public register<TTarget>(tween: Tween<TTarget>): Tween<TTarget> {
+    this.tweens.add(tween as Tween<unknown>);
+
+    return tween;
+  }
+
+  public remove(tween: Tween<unknown>): void {
+    this.tweens.delete(tween);
+  }
+
+  public clear(): void {
+    this.tweens.clear();
+  }
+
+  public pause(): void {
+    this.isPaused = true;
+  }
+
+  public resume(): void {
+    this.isPaused = false;
+  }
+
+  /**
+   * Advances all active tweens using elapsed milliseconds.
+   */
+  public update(deltaMS: number): void {
+    if (this.isPaused || this.tweens.size === 0) {
+      return;
+    }
+
+    const completedTweens: Tween<unknown>[] = [];
+
+    for (const tween of this.tweens) {
+      tween.update(deltaMS);
+
+      if (tween.completed) {
+        completedTweens.push(tween);
+      }
+    }
+
+    completedTweens.forEach((tween) => {
+      this.tweens.delete(tween);
+    });
+  }
+
+  public destroy(): void {
+    this.ticker?.remove(this.handleTick);
+    this.tweens.clear();
+
+    if (TweenManager.sharedInstance === this) {
+      TweenManager.clearShared();
+    }
+  }
+
+  private readonly handleTick = (): void => {
+    if (!this.ticker) {
+      return;
+    }
+
+    this.update(this.ticker.deltaMS);
+  };
+}
