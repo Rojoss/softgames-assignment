@@ -2,7 +2,7 @@ import { Card } from "@/scenes/AceOfShadows/Card";
 import { CardPile } from "@/scenes/AceOfShadows/CardPile";
 import { Scene } from "@/scenes/Scene";
 import { ACE_OF_SHADOWS_CARDS } from "@/scenes/AceOfShadows/cards";
-import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "@/services/AutoScaler";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "@/services/window/AutoScaler";
 import type { SceneManager } from "@/services/scenes/SceneManager";
 import { BackButton } from "@/ui/BackButton";
 import { shuffleArray } from "@/utils/shuffleArray";

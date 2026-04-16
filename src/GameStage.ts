@@ -1,4 +1,4 @@
-import { FPSMeter } from "@/services/FPSMeter";
+import { FPSMeter } from "@/services/fps/FPSMeter";
 import { SceneManager } from "@/services/scenes/SceneManager";
 import { FPSDisplay as FPSDisplay } from "@/ui/FPSDisplay";
 import { Container } from "pixi.js";

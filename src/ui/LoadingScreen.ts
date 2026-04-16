@@ -1,5 +1,5 @@
 import { APP_BACKGROUND_COLOR } from "@/main";
-import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "@/services/AutoScaler";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "@/services/window/AutoScaler";
 import { Container, Graphics, Rectangle, Text } from "pixi.js";
 
 export class LoadingScreen extends Container {

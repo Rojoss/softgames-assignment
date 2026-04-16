@@ -1,5 +1,5 @@
 import { Scene } from "@/scenes/Scene";
-import { VIEWPORT_WIDTH } from "@/services/AutoScaler";
+import { VIEWPORT_WIDTH } from "@/services/window/AutoScaler";
 import type { SceneManager } from "@/services/scenes/SceneManager";
 import { BackButton } from "@/ui/BackButton";
 

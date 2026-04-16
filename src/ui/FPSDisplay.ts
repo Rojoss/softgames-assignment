@@ -1,6 +1,6 @@
 import { Container, type DestroyOptions, Text } from "pixi.js";
 
-import { FPSMeter } from "@/services/FPSMeter";
+import { FPSMeter } from "@/services/fps/FPSMeter";
 
 const GOOD_FPS_THRESHOLD = 50;
 const WARNING_FPS_THRESHOLD = 30;

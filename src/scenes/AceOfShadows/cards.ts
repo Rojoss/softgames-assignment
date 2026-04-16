@@ -1,4 +1,4 @@
-import { getSheetTexture } from "@/assets/getSheetTexture";
+import { getSheetTexture } from "@/services/assets/getSheetTexture";
 import type { Texture } from "pixi.js";
 
 export const CARD_SUITS = ["Clubs", "Diamonds", "Hearts", "Spades"] as const;

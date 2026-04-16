@@ -1,5 +1,5 @@
-import { getSheetTexture } from "@/assets/getSheetTexture";
 import { getCardTexture, type CardType } from "@/scenes/AceOfShadows/cards";
+import { getSheetTexture } from "@/services/assets/getSheetTexture";
 import { Sprite } from "pixi.js";
 
 export type CardSide = "open" | "close";

@@ -1,4 +1,4 @@
-import type { SceneId } from "@/scenes/SceneId";
+import type { SceneId } from "@/services/scenes/SceneId";
 
 export const SHEET_IDS = ["AceOfShadows"] as const;
 

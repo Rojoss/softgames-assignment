@@ -1,5 +1,5 @@
 import { Scene } from "@/scenes/Scene";
-import { SceneId } from "@/scenes/SceneId";
+import { SceneId } from "@/services/scenes/SceneId";
 import type { SceneManager } from "@/services/scenes/SceneManager";
 
 import { AceOfShadows } from "@/scenes/AceOfShadows/AceOfShadows";

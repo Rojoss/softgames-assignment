@@ -4,6 +4,7 @@ import { AutoScaler } from "@/services/window/AutoScaler";
 import { FPSMeter } from "@/services/FPSMeter";
 import { SceneManager } from "@/services/scenes/SceneManager";
 import { Application } from "pixi.js";
+import { FPSMeter } from "@/services/fps/FPSMeter";
 
 export class App {
   private readonly gameStage: GameStage;

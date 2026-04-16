@@ -1,10 +1,10 @@
 import { Container } from "pixi.js";
 
 import { Scene } from "@/scenes/Scene";
-import type { SceneId } from "@/scenes/SceneId";
-import { sceneFactories } from "@/factories/SceneFactory";
+import { sceneFactories } from "@/services/scenes/SceneFactory";
 import { AssetLoader } from "@/services/assets/AssetLoader";
 import { LoadingScreen } from "@/ui/LoadingScreen";
+import { SceneId } from "@/services/scenes/SceneId";
 
 /**
  * The SceneManager is responsible for managing the different scenes of the game.

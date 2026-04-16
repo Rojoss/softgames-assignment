@@ -1,5 +1,5 @@
 import { sceneAssets } from "@/services/assets/sceneAssets";
-import { SCENE_IDS, type SceneId } from "@/scenes/SceneId";
+import { SceneId, SCENE_IDS } from "@/services/scenes/SceneId";
 import { Assets } from "pixi.js";
 
 let hasRegisteredBundles = false;
