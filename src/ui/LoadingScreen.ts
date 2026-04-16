@@ -1,4 +1,4 @@
-import { APP_BACKGROUND_COLOR } from "@/main";
+import { DEFAULT_APP_BACKGROUND_COLOR } from "@/appColors";
 import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "@/services/window/AutoScaler";
 import { Container, Graphics, Rectangle, Text } from "pixi.js";
 
@@ -10,7 +10,7 @@ export class LoadingScreen extends Container {
     this.eventMode = "static";
     this.hitArea = new Rectangle(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
-    const background = new Graphics().rect(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT).fill(APP_BACKGROUND_COLOR);
+    const background = new Graphics().rect(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT).fill(DEFAULT_APP_BACKGROUND_COLOR);
 
     const label = new Text({
       text: "Loading...",

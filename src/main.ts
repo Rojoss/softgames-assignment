@@ -1,15 +1,14 @@
 import { Application } from "pixi.js";
 import { App } from "@/App";
+import { DEFAULT_APP_BACKGROUND_COLOR } from "@/appColors";
 // import { FullscreenController } from "@/services/FullscreenController";
-
-export const APP_BACKGROUND_COLOR = 0xa1bfcf;
 
 (async () => {
   const pixi = new Application();
   await pixi.init({
     antialias: true,
     autoDensity: true,
-    background: APP_BACKGROUND_COLOR,
+    background: DEFAULT_APP_BACKGROUND_COLOR,
     resizeTo: window,
     resolution: Math.min(window.devicePixelRatio || 1, 2),
   });

@@ -1,0 +1,2 @@
+export const DEFAULT_APP_BACKGROUND_COLOR = 0xa1bfcf;
+export const PHOENIX_FLAME_BACKGROUND_COLOR = 0x1c1713;

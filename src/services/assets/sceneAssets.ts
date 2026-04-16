@@ -1,6 +1,6 @@
 import type { SceneId } from "@/services/scenes/SceneId";
 
-export const SHEET_IDS = ["AceOfShadows", "MagicWords"] as const;
+export const SHEET_IDS = ["AceOfShadows", "MagicWords", "PhoenixFlame"] as const;
 
 export type SheetId = (typeof SHEET_IDS)[number];
 
@@ -33,5 +33,11 @@ export const sceneAssets: Record<SceneId, AssetDefinition[]> = {
       src: "/assets/magic-words/magic-words-0.json",
     },
   ],
-  PhoenixFlame: [...sharedAssets],
+  PhoenixFlame: [
+    ...sharedAssets,
+    {
+      alias: "PhoenixFlame",
+      src: "/assets/phoenix-flame/phoenix-flame-0.json",
+    },
+  ],
 };
