@@ -21,6 +21,10 @@ export const sceneAssets: Record<SceneId, AssetDefinition[]> = {
   MainMenu: [...sharedAssets],
   AceOfShadows: [
     ...sharedAssets,
+    {
+      alias: "AceOfShadows",
+      src: "/assets/ace-of-shadows/ace-of-shadows-0.json",
+    },
   ],
   MagicWords: [...sharedAssets],
   PhoenixFlame: [...sharedAssets],
