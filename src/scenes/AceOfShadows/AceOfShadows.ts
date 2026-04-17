@@ -94,7 +94,7 @@ export class AceOfShadows extends Scene {
       return;
     }
 
-    void this.transferTopCard();
+    // void this.transferTopCard();
     this.transferIntervalId = window.setInterval(() => {
       void this.transferTopCard();
     }, TRANSFER_INTERVAL_MS);

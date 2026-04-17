@@ -44,7 +44,7 @@ export class FullscreenController {
     }
 
     triggerTarget.addEventListener(
-      "pointerdown",
+      "click",
       () => {
         void this.request().catch(() => {
           // Ignore blocked attempts. Some browsers may deny fullscreen even after the first interaction.
