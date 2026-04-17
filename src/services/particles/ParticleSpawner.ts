@@ -1,4 +1,4 @@
-import { ParticleContainer, type DestroyOptions, Rectangle, Texture } from "pixi.js";
+import { ParticleContainer, type DestroyOptions, Texture } from "pixi.js";
 
 import { Particle, type ParticleSpawnOptions } from "@/services/particles/Particle";
 
@@ -6,7 +6,6 @@ export interface ParticleSpawnerOptions {
   texture: Texture;
   maxParticles: number;
   spawnIntervalMS: number;
-  boundsArea?: Rectangle;
   createSpawnOptions: () => ParticleSpawnOptions;
 }
 
@@ -18,7 +17,7 @@ export class ParticleSpawner extends ParticleContainer<Particle> {
   private readonly spawnIntervalMS: number;
   private readonly createSpawnOptions: () => ParticleSpawnOptions;
 
-  private animationFrameId?: number;
+  private animationRAF?: number;
   private lastFrameTime = 0;
   private spawnElapsedMS = 0;
 
@@ -38,7 +37,6 @@ export class ParticleSpawner extends ParticleContainer<Particle> {
     this.maxParticles = options.maxParticles;
     this.spawnIntervalMS = options.spawnIntervalMS;
     this.createSpawnOptions = options.createSpawnOptions;
-    this.boundsArea = options.boundsArea ?? new Rectangle(-256, -256, 512, 512);
     this.spawnElapsedMS = this.spawnIntervalMS;
 
     this.addParticle(...particles);
@@ -48,24 +46,24 @@ export class ParticleSpawner extends ParticleContainer<Particle> {
    * Starts the emitter update loop.
    */
   public start(): void {
-    if (this.animationFrameId !== undefined) {
+    if (this.animationRAF !== undefined) {
       return;
     }
 
     this.lastFrameTime = performance.now();
-    this.animationFrameId = requestAnimationFrame(this.handleFrame);
+    this.animationRAF = requestAnimationFrame(this.handleFrame);
   }
 
   /**
    * Stops the emitter update loop.
    */
   public stop(): void {
-    if (this.animationFrameId === undefined) {
+    if (this.animationRAF === undefined) {
       return;
     }
 
-    cancelAnimationFrame(this.animationFrameId);
-    this.animationFrameId = undefined;
+    cancelAnimationFrame(this.animationRAF);
+    this.animationRAF = undefined;
   }
 
   public override destroy(options?: DestroyOptions): void {
@@ -78,7 +76,7 @@ export class ParticleSpawner extends ParticleContainer<Particle> {
 
     this.lastFrameTime = currentTime;
     this.step(deltaMS);
-    this.animationFrameId = requestAnimationFrame(this.handleFrame);
+    this.animationRAF = requestAnimationFrame(this.handleFrame);
   };
 
   private step(deltaMS: number): void {
@@ -92,9 +90,9 @@ export class ParticleSpawner extends ParticleContainer<Particle> {
 
     this.spawnElapsedMS += deltaMS;
 
+    // Spawn new particles while we have elapsed spawn time and available particle slots.
     while (this.spawnElapsedMS >= this.spawnIntervalMS && activeParticles < this.maxParticles) {
       const particle = this.getAvailableParticle();
-
       if (!particle) {
         break;
       }
@@ -105,6 +103,9 @@ export class ParticleSpawner extends ParticleContainer<Particle> {
     }
   }
 
+  /**
+   * Finds an available inactive particle from the pool, or returns undefined if all particles are active.
+   */
   private getAvailableParticle(): Particle | undefined {
     return this.particleChildren.find((particle) => !particle.active);
   }

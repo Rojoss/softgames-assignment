@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>pixijs4</string>
         <key>textureFileName</key>
-        <filename>ace-of-shadows-{n}.png</filename>
+        <filename>../public/assets/ace-of-shadows-{n}.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrQualityLevel</key>
@@ -124,7 +124,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>ace-of-shadows-{n}.json</filename>
+                <filename>../public/assets/ace-of-shadows-{n}.json</filename>
             </struct>
         </map>
         <key>multiPackMode</key>
@@ -173,60 +173,60 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">cards/cardBack.png</key>
-            <key type="filename">cards/cardClubs10.png</key>
-            <key type="filename">cards/cardClubs2.png</key>
-            <key type="filename">cards/cardClubs3.png</key>
-            <key type="filename">cards/cardClubs4.png</key>
-            <key type="filename">cards/cardClubs5.png</key>
-            <key type="filename">cards/cardClubs6.png</key>
-            <key type="filename">cards/cardClubs7.png</key>
-            <key type="filename">cards/cardClubs8.png</key>
-            <key type="filename">cards/cardClubs9.png</key>
-            <key type="filename">cards/cardClubsA.png</key>
-            <key type="filename">cards/cardClubsJ.png</key>
-            <key type="filename">cards/cardClubsK.png</key>
-            <key type="filename">cards/cardClubsQ.png</key>
-            <key type="filename">cards/cardDiamonds10.png</key>
-            <key type="filename">cards/cardDiamonds2.png</key>
-            <key type="filename">cards/cardDiamonds3.png</key>
-            <key type="filename">cards/cardDiamonds4.png</key>
-            <key type="filename">cards/cardDiamonds5.png</key>
-            <key type="filename">cards/cardDiamonds6.png</key>
-            <key type="filename">cards/cardDiamonds7.png</key>
-            <key type="filename">cards/cardDiamonds8.png</key>
-            <key type="filename">cards/cardDiamonds9.png</key>
-            <key type="filename">cards/cardDiamondsA.png</key>
-            <key type="filename">cards/cardDiamondsJ.png</key>
-            <key type="filename">cards/cardDiamondsK.png</key>
-            <key type="filename">cards/cardDiamondsQ.png</key>
-            <key type="filename">cards/cardHearts10.png</key>
-            <key type="filename">cards/cardHearts2.png</key>
-            <key type="filename">cards/cardHearts3.png</key>
-            <key type="filename">cards/cardHearts4.png</key>
-            <key type="filename">cards/cardHearts5.png</key>
-            <key type="filename">cards/cardHearts6.png</key>
-            <key type="filename">cards/cardHearts7.png</key>
-            <key type="filename">cards/cardHearts8.png</key>
-            <key type="filename">cards/cardHearts9.png</key>
-            <key type="filename">cards/cardHeartsA.png</key>
-            <key type="filename">cards/cardHeartsJ.png</key>
-            <key type="filename">cards/cardHeartsK.png</key>
-            <key type="filename">cards/cardHeartsQ.png</key>
-            <key type="filename">cards/cardJoker.png</key>
-            <key type="filename">cards/cardSpades10.png</key>
-            <key type="filename">cards/cardSpades2.png</key>
-            <key type="filename">cards/cardSpades3.png</key>
-            <key type="filename">cards/cardSpades4.png</key>
-            <key type="filename">cards/cardSpades5.png</key>
-            <key type="filename">cards/cardSpades6.png</key>
-            <key type="filename">cards/cardSpades7.png</key>
-            <key type="filename">cards/cardSpades8.png</key>
-            <key type="filename">cards/cardSpades9.png</key>
-            <key type="filename">cards/cardSpadesA.png</key>
-            <key type="filename">cards/cardSpadesJ.png</key>
-            <key type="filename">cards/cardSpadesK.png</key>
-            <key type="filename">cards/cardSpadesQ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardBack.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs10.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs2.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs3.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs4.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs5.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs6.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs7.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs8.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubs9.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubsA.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubsJ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubsK.png</key>
+            <key type="filename">ace-of-shadows/cards/cardClubsQ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds10.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds2.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds3.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds4.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds5.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds6.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds7.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds8.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamonds9.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamondsA.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamondsJ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamondsK.png</key>
+            <key type="filename">ace-of-shadows/cards/cardDiamondsQ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts10.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts2.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts3.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts4.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts5.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts6.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts7.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts8.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHearts9.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHeartsA.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHeartsJ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHeartsK.png</key>
+            <key type="filename">ace-of-shadows/cards/cardHeartsQ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardJoker.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades10.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades2.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades3.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades4.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades5.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades6.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades7.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades8.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpades9.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpadesA.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpadesJ.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpadesK.png</key>
+            <key type="filename">ace-of-shadows/cards/cardSpadesQ.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0,0</point_f>
@@ -248,7 +248,7 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>cards</filename>
+                    <filename>ace-of-shadows</filename>
                 </array>
             </struct>
         </map>

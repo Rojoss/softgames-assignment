@@ -23,21 +23,21 @@ export const sceneAssets: Record<SceneId, AssetDefinition[]> = {
     ...sharedAssets,
     {
       alias: "AceOfShadows",
-      src: "/assets/ace-of-shadows/ace-of-shadows-0.json",
+      src: "/assets/ace-of-shadows-0.json",
     },
   ],
   MagicWords: [
     ...sharedAssets,
     {
       alias: "MagicWords",
-      src: "/assets/magic-words/magic-words-0.json",
+      src: "/assets/magic-words-0.json",
     },
   ],
   PhoenixFlame: [
     ...sharedAssets,
     {
       alias: "PhoenixFlame",
-      src: "/assets/phoenix-flame/phoenix-flame-0.json",
+      src: "/assets/phoenix-flame-0.json",
     },
   ],
 };

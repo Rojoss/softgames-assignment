@@ -24,7 +24,7 @@ function createDeck(suits: readonly CardSuit[] = CARD_SUITS, ranks: readonly Car
 export const ACE_OF_SHADOWS_CARDS: ReadonlyArray<CardType> = [...createDeck(), ...createDeck(), ...createDeck(CARD_SUITS, CARD_RANKS.slice(0, 10))];
 
 export function getCardTextureId(card: CardType): string {
-  return `card${card.suit}${card.rank}.png`;
+  return `cards/card${card.suit}${card.rank}.png`;
 }
 
 export function getCardTexture(card: CardType): Texture {

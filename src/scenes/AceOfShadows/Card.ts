@@ -13,7 +13,7 @@ export class Card extends Sprite {
   private side: CardSide;
 
   constructor(cardType: CardType, side: CardSide = "close") {
-    super(side === "open" ? getCardTexture(cardType) : getSheetTexture("AceOfShadows", "cardBack.png"));
+    super(side === "open" ? getCardTexture(cardType) : getSheetTexture("AceOfShadows", "cards/cardBack.png"));
 
     this.cardType = cardType;
     this.side = side;
@@ -27,6 +27,6 @@ export class Card extends Sprite {
    */
   public flip(side?: CardSide): void {
     this.side = side ?? (this.side === "open" ? "close" : "open");
-    this.texture = this.side === "open" ? getCardTexture(this.cardType) : getSheetTexture("AceOfShadows", "cardBack.png");
+    this.texture = this.side === "open" ? getCardTexture(this.cardType) : getSheetTexture("AceOfShadows", "cards/cardBack.png");
   }
 }

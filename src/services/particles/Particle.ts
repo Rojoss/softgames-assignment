@@ -21,7 +21,8 @@ export interface ParticleSpawnOptions {
 }
 
 /**
- * Lightweight pooled particle with simple lifetime-based motion and color interpolation.
+ * Lightweight pooled particle
+ * With simple lifetime-based motion and color interpolation.
  */
 export class Particle extends PixiParticle {
   private ageMS = 0;
