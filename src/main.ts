@@ -1,7 +1,8 @@
 import { Application } from "pixi.js";
 import { App } from "@/App";
 import { DEFAULT_APP_BACKGROUND_COLOR } from "@/appColors";
-// import { FullscreenController } from "@/services/FullscreenController";
+import { FullscreenController } from "@/services/FullscreenController";
+import { FullscreenController } from "@/services/window/FullscreenController";
 
 (async () => {
   const pixi = new Application();
@@ -19,12 +20,12 @@ import { DEFAULT_APP_BACKGROUND_COLOR } from "@/appColors";
     throw new Error("Missing #pixi-container element.");
   }
 
-  // const fullscreenController = new FullscreenController(pixiContainer);
+  const fullscreenController = new FullscreenController(pixiContainer);
   pixiContainer.appendChild(pixi.canvas);
 
   const app = new App(pixi);
   await app.start();
 
-  // fullscreenController.enterOnStart();
-  // fullscreenController.enableAutoEnter(pixi.canvas);
+  fullscreenController.enterOnStart();
+  fullscreenController.enableAutoEnter(pixi.canvas);
 })();
