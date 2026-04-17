@@ -1,7 +1,6 @@
 import { Application } from "pixi.js";
 import { App } from "@/App";
 import { DEFAULT_APP_BACKGROUND_COLOR } from "@/appColors";
-import { FullscreenController } from "@/services/FullscreenController";
 import { FullscreenController } from "@/services/window/FullscreenController";
 
 (async () => {
