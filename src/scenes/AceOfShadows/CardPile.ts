@@ -3,6 +3,7 @@ import { Container, Point } from "pixi.js";
 import { Card, type CardSide } from "@/scenes/AceOfShadows/Card";
 
 const DEFAULT_CARD_OFFSET = { x: -20, y: -35 };
+const MAX_VISIBLE_SOURCE_CARDS = 5;
 
 /**
  * Stores a stack of cards.
@@ -35,8 +36,22 @@ export class CardPile extends Container {
     return this.cards.length === 0 ? new Point(0, 0) : new Point(DEFAULT_CARD_OFFSET.x, DEFAULT_CARD_OFFSET.y);
   }
 
-  private getSourceTopCardPosition(): Point {
-    return this.cards.length > 1 ? new Point(DEFAULT_CARD_OFFSET.x, DEFAULT_CARD_OFFSET.y) : new Point(0, 0);
+  private getSourceCardPosition(cardIndex: number): Point {
+    if (this.cards.length <= 1) {
+      return new Point(0, 0);
+    }
+
+    const visibleCardCount = Math.min(this.cards.length, MAX_VISIBLE_SOURCE_CARDS);
+    const visibleStartIndex = this.cards.length - visibleCardCount;
+
+    if (cardIndex < visibleStartIndex) {
+      return new Point(0, 0);
+    }
+
+    const visibleIndex = cardIndex - visibleStartIndex;
+    const positionProgress = visibleCardCount === 1 ? 0 : visibleIndex / (visibleCardCount - 1);
+
+    return new Point(DEFAULT_CARD_OFFSET.x * positionProgress, DEFAULT_CARD_OFFSET.y * positionProgress);
   }
 
   /**
@@ -50,18 +65,10 @@ export class CardPile extends Container {
       return;
     }
 
-    const previousTopCard = this.getTopCard();
-
-    if (previousTopCard) {
-      previousTopCard.position.set(0, 0);
-      previousTopCard.flip(this.isOpen ? "open" : "close");
-    }
-
     this.cards.push(card);
 
-    card.position.copyFrom(this.getSourceTopCardPosition());
-    card.flip(this.isOpen || this.topCardSide === "open" ? "open" : "close");
     this.addChild(card);
+    this.updateSourcePileLayout();
   }
 
   /**
@@ -88,7 +95,7 @@ export class CardPile extends Container {
       this.removeChild(card);
     }
 
-    this.updateSourceTopCard();
+    this.updateSourcePileLayout();
 
     return card;
   }
@@ -108,12 +115,7 @@ export class CardPile extends Container {
       return;
     }
 
-    this.cards.forEach((card) => {
-      card.position.set(0, 0);
-      card.flip(this.isOpen ? "open" : "close");
-    });
-
-    this.updateSourceTopCard();
+    this.updateSourcePileLayout();
   }
 
   /**
@@ -132,7 +134,7 @@ export class CardPile extends Container {
     }
 
     this.topCardSide = side ?? (this.topCardSide === "open" ? "close" : "open");
-    this.updateSourceTopCard();
+    this.updateSourcePileLayout();
   }
 
   public hasCards(): boolean {
@@ -144,18 +146,20 @@ export class CardPile extends Container {
    * This is used to ensure the correct card side is shown when cards are added or removed,
    * and to reset the position of the source top card when a card is removed from the pile.
    */
-  private updateSourceTopCard(): void {
+  private updateSourcePileLayout(): void {
     if (this.preserveCardPositions) {
       return;
     }
 
-    const topCard = this.getTopCard();
+    const topCardIndex = this.cards.length - 1;
 
-    if (!topCard) {
+    if (topCardIndex < 0) {
       return;
     }
 
-    topCard.position.copyFrom(this.getSourceTopCardPosition());
-    topCard.flip(this.isOpen || this.topCardSide === "open" ? "open" : "close");
+    this.cards.forEach((card, cardIndex) => {
+      card.position.copyFrom(this.getSourceCardPosition(cardIndex));
+      card.flip(this.isOpen || (cardIndex === topCardIndex && this.topCardSide === "open") ? "open" : "close");
+    });
   }
 }
