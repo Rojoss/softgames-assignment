@@ -12,8 +12,7 @@ import { lerp } from "@/utils/lerp";
 const LAND_OFFSET_RANGE = 70;
 const LAND_ROTATION_RANGE_DEGREES = 16;
 
-const MOVE_DURATION_MS = 1800;
-const MOVE_DURATION_VARIANCE_MS = 300;
+const MOVE_DURATION_MS = 2000;
 const MOVE_LIFT_PX = 68;
 const MOVE_LIFT_VARIANCE_PX = 22;
 const MOVE_SWAY_PX = 52;
@@ -120,7 +119,7 @@ export class CardAnimationService {
 
   private createMoveProfile(): CardMoveProfile {
     return {
-      duration: MOVE_DURATION_MS + getRandomInRange(-MOVE_DURATION_VARIANCE_MS, MOVE_DURATION_VARIANCE_MS),
+      duration: MOVE_DURATION_MS,
       lift: MOVE_LIFT_PX + getRandomInRange(-MOVE_LIFT_VARIANCE_PX, MOVE_LIFT_VARIANCE_PX),
       sway: getRandomInRange(-MOVE_SWAY_PX, MOVE_SWAY_PX),
       rotationAmplitude: MOVE_ROTATION + getRandomInRange(-MOVE_ROTATION_VARIANCE, MOVE_ROTATION_VARIANCE),
